@@ -55,6 +55,7 @@ proc pullall() =
     discard os.execShellCmd("git pull")
 
 proc main() =
+  checkProjects()
   echo(listProjects())
   echo("What Project do you want to update?")
   let
@@ -63,8 +64,6 @@ proc main() =
     pullall()
   elif input == "quit" or input == "q":
     quit()
-  elif input == "check" or input == "c":
-    checkProjects()
   else:
     pull(input)
   main()
