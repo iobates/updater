@@ -1,0 +1,5 @@
+Updator
+
+Not a particularly well written piece of software, it does however do one thing
+quite well, retrieve updates from git repos.
+Everything is controlled from the json file.
