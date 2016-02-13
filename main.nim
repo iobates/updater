@@ -58,9 +58,10 @@ proc main() =
   checkProjects()
   echo(listProjects())
   echo("What Project do you want to update?")
+  echo("To update all use 'all' or 'a', quit with 'quit' or 'q'")
   let
     input = readline(stdin)
-  if input == "all":
+  if input == "all" or input == "a":
     pullall()
   elif input == "quit" or input == "q":
     quit()
