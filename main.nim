@@ -54,6 +54,15 @@ proc pullall() =
     os.setCurrentDir($parsed[k]["dir"].str)
     discard os.execShellCmd("git pull")
 
+
+proc cron_main() =
+  checkProjects()
+  for k,v in pairs(parsed):
+    for key, value in pairs(v):
+      if key == "update":
+        echo(value)
+
+
 proc main() =
   checkProjects()
   echo(listProjects())
@@ -70,5 +79,5 @@ proc main() =
   main()
 
 
-main()
+cron_main()
 
