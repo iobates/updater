@@ -1,6 +1,6 @@
-import json
-import os
-import strutils
+# Copyright Tobias Lindgaard
+# License GPLv3 or later
+import json, os, strutils, times
 
 proc getJson(file:string): string =
   let data = readFile(file)
@@ -31,7 +31,37 @@ proc checkProjects() =
       echo($parsed[key]["repo"].str)
       discard os.execShellCmd("git clone " & $parsed[key]["repo"].str)
       echo("Seems " & $parsed[key]["dir"] & " doesn't exists")
+
+proc whatDay() : WeekDay =
+  var lt = getLocalTime(getTime())
+  lt.weekday
         
+
+proc strToDay(d: string) : WeekDay =
+  if d == "Monday" or d == "monday" or d == "Mon" or d == "mon":
+    return dMon
+  elif d == "Tuesday" or d == "tuesday" or d == "Tue" or d == "tue":
+    return dTue
+  elif d == "Wednesday" or d == "wednesday" or d == "Wed" or d == "wed":
+    return dWed
+  elif d == "Thursday" or d == "thursday" or d == "Thu" or d == "thu":
+    return dThu
+  elif d == "Friday" or d == "friday" or d == "Fri" or d == "fri":
+    return dFri
+  elif d == "Saturday" or d == "saturday" or d == "Sat" or d == "sat":
+    return dSat
+  elif d == "Sunday" or d == "sunday" or d == "Sun" or d == "sun":
+    return dSun 
+
+            
+proc matchDay(day: string): bool =
+  let vday = whatDay()
+  if vday == strToDay(day):
+    return true
+  else:
+    return false
+    
+
       
 proc listProjects(): seqString =
   var list : seqString
@@ -55,14 +85,22 @@ proc pullall() =
     discard os.execShellCmd("git pull")
 
 
-proc cron_main() =
+proc moveToProject(p: string) =
+  os.setCurrentDir($parsed[p]["dir"].str)
+    
+
+proc cronMain() =
   checkProjects()
-  for k,v in pairs(parsed):
-    for key, value in pairs(v):
-      if key == "update":
-        echo(value)
+  for project,v in pairs(parsed):
+    for pkey, value in pairs(v):
+      if pkey == "update":
+        for d, day in pairs(value):
+          if matchDay(day.str) or day.str == "all":
+            pull(project)
 
 
+
+    
 proc main() =
   checkProjects()
   echo(listProjects())
@@ -78,6 +116,10 @@ proc main() =
     pull(input)
   main()
 
-
 cron_main()
+# var d = whatDay()
+# if d == dSun:
+#     echo "Today is ", d
+
+
 
